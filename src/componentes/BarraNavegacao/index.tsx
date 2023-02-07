@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import http from "../../http";
+import { ICategoria } from "../../interfaces/ICategoria";
 import BotaoNavegacao from "../BotaoNavegacao";
 import ModalCadastroUsuario from "../ModalCadastroUsuario";
 import ModalLoginUsuario from "../ModalLoginUsuario";
@@ -11,6 +13,14 @@ const BarraNavegacao = () => {
   const [modalAberta, setModalAberta] = useState(false);
   const [modalAbertaLogin, setModalAbertaLogin] = useState(false);
 
+  const [Categorias, setCategorias] = useState<ICategoria[]>([]);
+
+  useEffect(() => {
+    http.get<ICategoria[]>("categorias").then((respota) => {
+      setCategorias(respota.data);
+    });
+  }, []);
+
   let navigate = useNavigate();
 
   const token = sessionStorage.getItem("token");
@@ -18,15 +28,15 @@ const BarraNavegacao = () => {
   const [usuarioLogado, setUsuarioLogado] = useState<boolean>(token != null);
 
   const aoEfetuarLogin = () => {
-    setModalAberta(false)
-    setUsuarioLogado(true)
-  }
+    setModalAberta(false);
+    setUsuarioLogado(true);
+  };
 
   const efetuarLogaout = () => {
     setUsuarioLogado(false);
-    sessionStorage.removeItem('token');
-    navigate('/');
-  }
+    sessionStorage.removeItem("token");
+    navigate("/");
+  };
 
   return (
     <nav className="ab-navbar">
@@ -39,21 +49,13 @@ const BarraNavegacao = () => {
         <li>
           <a href="#!">Categorias</a>
           <ul className="submenu">
-            <li>
-              <Link to="/">Frontend</Link>
-            </li>
-            <li>
-              <Link to="/">Programação</Link>
-            </li>
-            <li>
-              <Link to="/">Infraestrutura</Link>
-            </li>
-            <li>
-              <Link to="/">Business</Link>
-            </li>
-            <li>
-              <Link to="/">Design e UX</Link>
-            </li>
+            {Categorias.map((categoria) => (
+              <li key={categoria.id}>
+                <Link to={`/categorias/${categoria.slug}`}>
+                  {categoria.nome}
+                </Link>
+              </li>
+            ))}
           </ul>
         </li>
       </ul>
@@ -89,19 +91,19 @@ const BarraNavegacao = () => {
         )}
 
         {usuarioLogado && (
-            <>
+          <>
             <li>
               <Link to="/minha-conta/pedidos"> Minha Conta </Link>
             </li>
             <li>
-              <BotaoNavegacao 
-              texto="Logout"
-              textoAltSrc="Icone representando um usuário"
-              imagemSrc={usuario}
-              onClick={efetuarLogaout}
+              <BotaoNavegacao
+                texto="Logout"
+                textoAltSrc="Icone representando um usuário"
+                imagemSrc={usuario}
+                onClick={efetuarLogaout}
               ></BotaoNavegacao>
             </li>
-            </>
+          </>
         )}
       </ul>
     </nav>
