@@ -9,13 +9,13 @@ interface LivrosDestaqueProps {
 }
 
 const LivrosDestaque = ({ livros }: LivrosDestaqueProps) => {
-
+    
     const [selecionado, selecionarLivro] = useState<ILivro>()
-
+    
         useEffect(() => {
             if (livros?.length) {
                 selecionarLivro(livros[0])
-
+                
             }
         }, [livros])
 
@@ -43,7 +43,7 @@ const LivrosDestaque = ({ livros }: LivrosDestaqueProps) => {
                 </header>
                 <h6>{selecionado?.titulo}</h6>
                 <p>{selecionado?.descricao}</p>
-                <p>Por: {selecionado?.autor}</p>
+                <p>Por: {selecionado?.autor.nome}</p>
                 <footer>
                     <div className="preco">
                         <em>A partir de:</em>
@@ -60,3 +60,4 @@ const LivrosDestaque = ({ livros }: LivrosDestaqueProps) => {
 }
 
 export default LivrosDestaque
+
